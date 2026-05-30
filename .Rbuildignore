@@ -1,0 +1,17 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.Rhistory$
+^\.RData$
+^\.DS_Store$
+^cran-comments\.md$
+^CRAN-RELEASE$
+^README\.Rmd$
+^doc$
+^Meta$
+^src/.*\.o$
+^src/.*\.dll$
+^src/.*\.so$
+^src/.*\.d$
+^\.git$
+^\.gitignore$
+^dev$
