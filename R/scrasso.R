@@ -79,7 +79,7 @@
 #'                     data = simdata, copulafam="frank",
 #'                     a=quantile(simdata$T1,0.9), b=quantile(simdata$T2,0.9),
 #'                     B=20,seed = 12345,se = TRUE,se.method = "resampling")
-#' cat("tau.est =", fitasso$tau, "tau.se = ",fitasso$tau.se)
+#' c(tau.est = fitasso$tau, tau.se = fitasso$tau.se)
 #' # tau.est = 0.5216944 tau.se =  0.0891336
 #'
 #' set.seed(12345)
@@ -91,7 +91,7 @@
 #'                     data=simdata, copulafam="frank",
 #'                     a=quantile(simdata$T1,0.9), b=quantile(simdata$T2,0.9),
 #'                     B=20,seed = 12345,se = TRUE,se.method = "resampling")
-#' cat("tau.est =", round(fitasso$tau,2), "tau.se = ",round(fitasso$tau.se,2))
+#' c(tau.est = round(fitasso$tau, 2), tau.se = round(fitasso$tau.se, 2))
 #' # tau.est = 0.39 0.51 0.69 tau.se =  0.38 0.14 0.1
 #' @seealso  \code{\link{scrsurv}}
 #'
@@ -337,7 +337,7 @@ scrassonp_se<- function(time1,event1,time2,event2,out,se.method,B=100,
   out$B<- B
   copulafam<- out$copulafam
   copulaparam.boot<- c()
-  cat("Please wait for a while...")
+  message("Please wait for a while...")
   if(nstrata>1){
 
     if(se.method =="resampling"){

@@ -251,7 +251,8 @@ mscr_msurvplot<- function(objlist,nt.seperate=TRUE,linetype,censor,xlab,ylab,...
 #' @noRd
 mscr_dataplot<- function(tau.alpha,tau.theta,copulafam,varnames,
                          fontsize=10,height=7){
-
+  oldpar <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(oldpar), add = TRUE)
 
   Nodes <- c("Entry",varnames,"DTH")
   Edges <- list("Entry"=list(edges=c(varnames,"DTH")))
@@ -275,7 +276,7 @@ mscr_dataplot<- function(tau.alpha,tau.theta,copulafam,varnames,
     names(nAttrs$height)<- names(nAttrs$color)<- Nodes
   Rgraphviz::plot(treeobj,nodeAttrs=nAttrs,
               main = paste0("Under ",toupper(copulafam)," copula structure"))
-  par(new=TRUE,bty = 'n')
+  graphics::par(new = TRUE, bty = "n")
   plot(0:10,0:10,type="n",yaxt="n",xaxt="n")
 
   text(2,8,paste0("tau.theta= \n (",paste0(round(tau.theta,2),collapse = ","),")\n",

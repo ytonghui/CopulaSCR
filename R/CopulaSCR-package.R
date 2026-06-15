@@ -35,7 +35,7 @@
 "_PACKAGE"
 NULL
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 #' BiocManager::install("graph")
 #' BiocManager::install("Rgraphviz")

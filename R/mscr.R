@@ -82,7 +82,7 @@
 #' \emph{Working paper.}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' set.seed(12345)
 #' data <- simSCRmul(
 #'   n = 100, copulafam = "frank", K = 3,

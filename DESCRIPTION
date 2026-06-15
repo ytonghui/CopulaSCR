@@ -1,19 +1,25 @@
 Type: Package
 Package: CopulaSCR
-Title: Analysis of Semi-competing Risks Data Using Copula-based Models
-Version: 1.0
-Author: Tonghui Yu, Binhui Zhang
-Maintainer: Tonghui Yu <tonghui_yu@hit.deu.cn>, Binhui Zhang
-    <25B312019@stu.hit.deu.cn>
+Title: Analysis of Semi-Competing Risks Data Using Copula-Based Models
+Version: 1.0.1
+Authors@R: c(
+    person(given = "Tonghui",
+    family = "Yu",
+    role = c("aut", "cre"),
+    email = "tonghui_yu@126.com"),
+    person(given = "Binhui",
+    family = "Zhang",
+    role = "aut")
+    )
 Description: Simulate and analyze Semi-competing Risks Data using
     copula-based models. The Semi-competing Risks Data consist of a
-    terminal event time and single or multiple nonterminal event times.
+    terminal event time and single or multiple intermediate event times.
     The marginal survival functions of these event times are estimated
-    nonparametrically. The association parameters measuring dependency
+    without parametric assumptions. The association parameters measuring dependency
     among these event times involving the copula model are yielded from
     solving a concordance estimating equations or maximizing a
-    pseudo-likelihood function. Details can be found in the article
-    <doi:10.1093/biomtc/ujag087>.
+    pseudo-likelihood function. Details can be found in the article by
+    Tonghui Yu and Liming Xiang (2026) <doi:10.1093/biomtc/ujag087>.
 License: GPL-3
 Depends:
     foreach,

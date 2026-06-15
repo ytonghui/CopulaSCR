@@ -2,3 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+revdep/ 
+src/*.o 
+src/*.dll 
+src/*.so 
+*.Rcheck/ 
+*.tar.gz 

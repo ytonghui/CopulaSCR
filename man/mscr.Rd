@@ -86,7 +86,7 @@ terminal event, and then estimates the dependence parameter among multiple
 intermediate event times.
 }
 \examples{
-\dontrun{
+\donttest{
 set.seed(12345)
 data <- simSCRmul(
   n = 100, copulafam = "frank", K = 3,

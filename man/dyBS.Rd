@@ -40,7 +40,7 @@ A list containing the following components: BS=data.frame(time=times,BS=BS), IBS
 Brier Scores for terminal survival prediction
 }
 \examples{
-\dontrun{
+\donttest{
 set.seed(12345)
 data<- simSCRmul(n=100,copulafam = "frank",K=3,
                  tau.alpha = .5,tau.theta=.5)

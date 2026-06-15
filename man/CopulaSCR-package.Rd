@@ -20,4 +20,13 @@ an application to cardiovascular disease prognosis,Biometrics, 2026, 82(2): ujag
 Yu, Tonghui, Zhang, Binhui, Xiang, Liming, Ma, Jianwei, and Chen, Chixiang. CopulaSCR: An R Package for the Analysis of Semi-competing Risks Data Using Copula-based Models.
 \emph{Working paper.}
 }
+\author{
+\strong{Maintainer}: Tonghui Yu \email{tonghui_yu@126.com}
+
+Authors:
+\itemize{
+  \item Binhui Zhang
+}
+
+}
 \keyword{internal}

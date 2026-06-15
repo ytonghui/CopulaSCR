@@ -55,7 +55,7 @@ simSCR<- function (n  = 100,cens.rate = 5,copulafam="frank",tau=0.5,
   delta1<- 1*(T1<= T2obs)
   delta2<- 1*(T2<= C)
 
-  cat("observed rate:", sum(delta1)/n,"for T1,",sum(delta2)/n, "for T2","\n")
+  message("observed rate:", sum(delta1)/n,"for T1,",sum(delta2)/n, "for T2","\n")
 
 
   data<- data.frame(T1= T1obs,T2= T2obs,event1= delta1, event2= delta2)

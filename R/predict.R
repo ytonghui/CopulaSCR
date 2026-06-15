@@ -213,7 +213,7 @@
 #' @seealso \code{\link{mscr}}
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' set.seed(12345)
 #' data<- simSCRmul(n=100,copulafam = "frank",K=3,
 #'                  tau.alpha = .5,tau.theta=.5)
