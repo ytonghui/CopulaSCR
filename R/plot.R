@@ -1,4 +1,4 @@
-#' Plot of marginal survival curves of nonterminal and terminal event times
+#' Plot of Marginal Survival Curves for Nonterminal and Terminal Event Times
 #' @param x Object of class \code{scrsurv}.
 #' @param linetype 	line types. Allowed values includes i) "strata" for changing
 #'   linetypes by strata (i.e. groups); ii) a numeric vector (e.g., c(1, 2)) or
@@ -133,7 +133,7 @@
 }
 
 
-#' Plot of 'mscr' object
+#' Plot an 'mscr' Object
 #' @param x Object of class \code{mscr}.
 #' @param type Display the data structure if \code{type = "data"}, and
 #'   display the marginal survival curve of each event time if \code{type = "msurv"}.
@@ -283,4 +283,210 @@ mscr_dataplot<- function(tau.alpha,tau.theta,copulafam,varnames,
                "\ntau.alpha=\n",round(tau.alpha,2)),
         col="red")
 
+}
+
+
+#' Plot an 'scrassonp' Object
+#'
+#' @param x Object of class \code{scrassonp}.
+#' @param type Plot the observed bivariate survival times if
+#'   \code{type = "data"}, or display the fitted association structure if
+#'   \code{type = "scrassonp"}.
+#' @param xlab x-axis label.
+#' @param ylab y-axis label.
+#' @param ... Other arguments passed to the plotting function.
+#'
+#' @seealso \code{\link{scrassonp}}
+#' @return No return value.
+#' @export
+plot.scrassonp <- function(x,
+                           type = c("data", "scrassonp"),
+                           xlab = NULL,
+                           ylab = NULL,
+                           ...) {
+  
+  type <- match.arg(type)
+  
+  if (type == "data") {
+    
+    if (is.null(xlab)) xlab <- "T1"
+    if (is.null(ylab)) ylab <- "T2"
+    
+    nstrata <- x$t1data$nstrata
+    
+    draw_data <- function(ind, strata.name = NULL) {
+      
+      plotdata <- data.frame(
+        T1 = x$t1data$time[ind],
+        T2 = x$t2data$time[ind],
+        event1 = x$t1data$event[ind],
+        event2 = x$t2data$event[ind]
+      )
+      
+      obj <- SurvCorr::survcorr(
+        formula1 = survival::Surv(T2, event2) ~ 1,
+        formula2 = survival::Surv(T1, event1) ~ 1,
+        data = plotdata
+      )
+      
+      graphics::plot(
+        obj,
+        "times",
+        xlab = xlab,
+        ylab = ylab,
+        main = strata.name,
+        ...
+      )
+    }
+    
+    if (nstrata == 1) {
+      
+      draw_data(seq_along(x$t1data$time))
+      
+    } else {
+      
+      oldpar <- graphics::par(no.readonly = TRUE)
+      on.exit(graphics::par(oldpar))
+      
+      nr <- ceiling(sqrt(nstrata))
+      nc <- ceiling(nstrata / nr)
+      graphics::par(mfrow = c(nr, nc))
+      
+      size.strata <- x$t1data$size.strata
+      end.strata <- cumsum(size.strata)
+      start.strata <- c(1, utils::head(end.strata, -1) + 1)
+      
+      strata.names <- as.character(x$stratas[[1]])
+      
+      for (k in seq_len(nstrata)) {
+        
+        ind <- start.strata[k]:end.strata[k]
+        
+        draw_data(
+          ind = ind,
+          strata.name = strata.names[k]
+        )
+      }
+    }
+  }
+  
+  if (type == "scrassonp") {
+    
+    if (is.null(xlab)) xlab <- "u"
+    if (is.null(ylab)) ylab <- "v"
+    
+    u <- seq(0.001, 0.999, length.out = 100)
+    v <- seq(0.001, 0.999, length.out = 100)
+    
+    params <- x$copulaparam
+    taus <- x$tau
+    
+    draw_contour <- function(param, tau, strata.name = NULL,
+                             derivative = FALSE) {
+      
+      uv <- expand.grid(u = u, v = v)
+      
+      if (!derivative) {
+        
+        z <- matrix(
+          Copulafn(
+            copulafam = x$copulafam,
+            param = param,
+            p1 = uv$u,
+            p2 = uv$v
+          ),
+          nrow = length(u),
+          ncol = length(v)
+        )
+        
+        main <- paste0(
+          toupper(x$copulafam),
+          " copula"
+        )
+        
+      } else {
+        
+        z <- matrix(
+          dev_Copula(
+            copulafam = x$copulafam,
+            param = param,
+            p1 = uv$u,
+            p2 = uv$v,
+            mode = "12"
+          ),
+          nrow = length(u),
+          ncol = length(v)
+        )
+        
+        main <- paste0(
+          toupper(x$copulafam),
+          " copula density"
+        )
+      }
+      
+      if (!is.null(strata.name)) {
+        main <- paste0(main, " - ", strata.name)
+      }
+      
+      main <- paste0(
+        main,
+        "\nKendall's tau = ",
+        round(tau, 3)
+      )
+      
+      graphics::contour(
+        x = u,
+        y = v,
+        z = z,
+        xlab = xlab,
+        ylab = ylab,
+        main = main,
+        ...
+      )
+    }
+    
+    oldpar <- graphics::par(no.readonly = TRUE)
+    on.exit(graphics::par(oldpar))
+    
+    if (length(params) == 1) {
+      
+      graphics::par(mfrow = c(1, 2))
+      
+      draw_contour(
+        param = params,
+        tau = taus,
+        derivative = FALSE
+      )
+      
+      draw_contour(
+        param = params,
+        tau = taus,
+        derivative = TRUE
+      )
+      
+    } else {
+      
+      graphics::par(mfrow = c(length(params), 2))
+      
+      strata.names <- as.character(x$stratas[[1]])
+      
+      for (k in seq_along(params)) {
+        
+        draw_contour(
+          param = params[k],
+          tau = taus[k],
+          strata.name = strata.names[k],
+          derivative = FALSE
+        )
+        
+        draw_contour(
+          param = params[k],
+          tau = taus[k],
+          strata.name = strata.names[k],
+          derivative = TRUE
+        )
+      }
+    }
+  }
+  invisible(NULL)
 }

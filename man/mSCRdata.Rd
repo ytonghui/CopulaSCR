@@ -3,7 +3,7 @@
 \docType{data}
 \name{mSCRdata}
 \alias{mSCRdata}
-\title{Example semi-competing risks dataset with multiple intermediate events}
+\title{Example Semi-Competing Risks Dataset with Multiple Intermediate Events}
 \format{
 An object of class \code{mscrData}, implemented as a list with
 five components:

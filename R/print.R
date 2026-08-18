@@ -1,4 +1,4 @@
-#' Print objects in the scrsurv library
+#' Print an 'scrsurv' Object
 #'
 #' Pretty printing of objects created with the functionality of the `scrsurv'
 #' library.
@@ -69,7 +69,7 @@ print.scrsurv <- function(x,...) {
 }
 
 
-#' Print objects in the scrassonp library
+#' Print an 'scrassonp' Object
 #'
 #' Pretty printing of objects created with the functionality of the `scrassonp'
 #' library.
@@ -137,7 +137,7 @@ print.scrassonp <- function(x,...) {
 }
 
 
-#' Print objects in the mscr library
+#' Print an 'mscr' Object
 #'
 #' Pretty printing of objects created with the functionality of the `scrassonp'
 #' library.

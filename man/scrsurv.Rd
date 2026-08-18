@@ -2,7 +2,7 @@
 % Please edit documentation in R/scrsurv.R
 \name{scrsurv}
 \alias{scrsurv}
-\title{Nonparametric estimation of marginal survival functions}
+\title{Nonparametric Estimation of Marginal Survival Functions}
 \usage{
 scrsurv(fit, t1.formula, t2.formula, data = parent.frame(), tau,
   copulafam = c("clayton", "frank", "joe", "gumbel", "amh"),
@@ -100,15 +100,15 @@ Fitting a semiparametric copula-based model with pre-specified
 \examples{
 set.seed(12345)
 simdata<- simSCR(n = 50,tau = 0.5, copulafam = "frank")
-fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ 1,
-         t2.formula=Surv(T2, event2) ~ 1,
+fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ 1,
+         t2.formula=survival::Surv(T2, event2) ~ 1,
          data = simdata, copulafam="frank",
          a=quantile(simdata$T1,0.9),
          b=quantile(simdata$T2,0.9),B=10,seed = 12345,
          se = TRUE,se.method = "resampling")
 
 \donttest{
-c(tau.est = fitasso$tau, tau.se = fitasso$tau.se)
+association_estimates(fitasso)
 fit21<- scrsurv(fit = fitasso, method= "JFKC",surv2km=FALSE,B=10,
 se.method = "resampling",conf.int=TRUE,conftype =1,seed = 12345)
 plot(fit21,conf.int = TRUE)
@@ -117,7 +117,7 @@ se.method = fitasso$se.method,conf.int=TRUE,conftype =3)
 plot(fit22,conf.int = TRUE)
 
 #####  estimation of nonparametric marginals with specified Kendall's tau
-fit1<- scrsurv(t1.formula=Surv(T1, event1) ~ 1, t2.formula=Surv(T2, event2) ~ 1,
+fit1<- scrsurv(t1.formula=survival::Surv(T1, event1) ~ 1, t2.formula=survival::Surv(T2, event2) ~ 1,
 data =simdata, tau=0.5,copulafam="frank", B=10,
 method= "FJC",se.method = "bootstrap",conf.int=TRUE,seed = 12345)
 plot(fit1,conf.int = TRUE)
@@ -126,12 +126,12 @@ plot(fit1,conf.int = TRUE)
 set.seed(12345)
 simdata2<- simSCRtr(n = 500,K=3, tau = c(0.3,0.5,0.6), copulafam = "frank",
                     params=list(marginsDist = rep("exp",2), rate1=c(0.5,1,1.2),rate2=1))
-fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ tr,
-                    t2.formula=Surv(T2, event2) ~ tr,
+fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ tr,
+                    t2.formula=survival::Surv(T2, event2) ~ tr,
                     data=simdata2, copulafam="frank",
                     a=quantile(simdata2$T1,0.9), b=quantile(simdata2$T2,0.9),
                     B=10,seed = 12345,se = TRUE,se.method = "resampling")
-c(tau.est = round(fitasso$tau, 2), tau.se = round(fitasso$tau.se, 2))
+round(association_estimates(fitasso),2)
 
 fit21tr<- scrsurv(fit = fitasso, method= "JFKC",surv2km=FALSE,B=10,seed = 12345,
                   se.method = "resampling",conf.int=TRUE,conftype =1)
@@ -158,5 +158,5 @@ Yu, Tonghui, Zhang, Binhui, Xiang, Liming, Ma, Jianwei, and Chen, Chixiang. Copu
 \emph{Working paper.}
 }
 \seealso{
-\code{\link{scrassonp}}
+\code{\link{scrassonp}}, \code{\link{association_estimates}}
 }

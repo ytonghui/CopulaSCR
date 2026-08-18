@@ -1,4 +1,4 @@
-#' Example semi-competing risks dataset with a single intermediate event
+#' Example Semi-Competing Risks Dataset with a Single Intermediate Event
 #'
 #' A simulated dataset for semi-competing risks analysis with a single
 #' intermediate event and one terminal event.
@@ -13,7 +13,7 @@
 #' @usage data(SCRdata)
 "SCRdata"
 
-#' Example semi-competing risks dataset by treatment group
+#' Example Semi-Competing Risks Dataset by Treatment Group
 #'
 #' A simulated dataset for semi-competing risks analysis with a single
 #' intermediate event, one terminal event, and a treatment variable.
@@ -29,7 +29,7 @@
 #' @usage data(SCRdata_by_tr)
 "SCRdata_by_tr"
 
-#' Example semi-competing risks dataset with multiple intermediate events
+#' Example Semi-Competing Risks Dataset with Multiple Intermediate Events
 #'
 #' A simulated dataset for semi-competing risks analysis with three
 #' intermediate events and one terminal event.
@@ -45,3 +45,27 @@
 #' }
 #' @usage data(mSCRdata)
 "mSCRdata"
+
+#' MIMIC-IV Demo Dataset
+#'
+#' A demo dataset consisting of 100 patients, derived from a subset of the
+#' MIMIC-IV data.
+#'
+#' @format A data frame with 100 rows and 7 variables:
+#' \describe{
+#'   \item{person_id}{Patient identifier.}
+#'   \item{Digestive}{Recorded time for the digestive event.}
+#'   \item{Infection}{Recorded time for the infection event.}
+#'   \item{Renal}{Recorded time for the renal event.}
+#'   \item{Respiratory}{Recorded time for the respiratory event.}
+#'   \item{T_death}{Recorded time of death.}
+#'   \item{last_followup}{Recorded time of the last follow-up.}
+#' }
+#'
+#' @source
+#' Kallfelz, M. et al. (2021). MIMIC-IV demo data in the OMOP Common Data
+#' Model. PhysioNet. RRID: SCR_007345.
+#' \url{https://doi.org/10.13026/p1f5-7x35}
+#'
+#' @usage data(mimiv_demo)
+"mimiv_demo"

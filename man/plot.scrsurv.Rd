@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.scrsurv}
 \alias{plot.scrsurv}
-\title{Plot of marginal survival curves of nonterminal and terminal event times}
+\title{Plot of Marginal Survival Curves for Nonterminal and Terminal Event Times}
 \usage{
 \method{plot}{scrsurv}(
   x,
@@ -39,7 +39,7 @@ or vertically ("v") placed.}
 No return value.
 }
 \description{
-Plot of marginal survival curves of nonterminal and terminal event times
+Plot of Marginal Survival Curves for Nonterminal and Terminal Event Times
 }
 \seealso{
 \code{\link{scrsurv}}

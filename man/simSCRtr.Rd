@@ -2,7 +2,7 @@
 % Please edit documentation in R/simSCRnp.R
 \name{simSCRtr}
 \alias{simSCRtr}
-\title{Simulating a semi-competing risks data from a copula-based parametric model}
+\title{Simulate Stratified Semi-Competing Risks Data from a Copula-Based Parametric Model}
 \usage{
 simSCRtr(n  = 100, K = 2, cens.rate = 5, copulafam = "frank", tau = 0.5,
 params = list(marginsDist = rep("exp", 2),rate1 = 1,rate2 = 1))

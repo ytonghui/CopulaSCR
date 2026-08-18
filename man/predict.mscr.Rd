@@ -2,11 +2,11 @@
 % Please edit documentation in R/predict.R
 \name{predict.mscr}
 \alias{predict.mscr}
-\title{Dynamic terminal survival prediction}
+\title{Dynamic Terminal Survival Prediction}
 \usage{
 \method{predict}{mscr}(
   object,
-  t1obs,
+  t1obs = NULL,
   times = knots(object$S_D),
   cause = NULL,
   type = c("msurv", "surv", "rrms", "rmst", "qrl", "qst"),
@@ -27,7 +27,8 @@
 \item{cause}{Integer. The survival prediction based on the 1st intermediate event if \code{cause=1}}
 
 \item{type}{A character string specifying the prediction quantity to return.
-Possible values are \code{"surv"} for the survival function,
+Possible values are \code{"msurv"} for the marginal survival function,
+\code{"surv"} for the survival function,
 \code{"rrms"} for the restricted residual mean survival time,
 \code{"rmst"} for the restricted mean survival time, calculated as the
 restricted residual mean survival time plus the landmark time,
@@ -73,22 +74,22 @@ msurv<- predict(fit, t1obs=mT1.te,type="msurv")
 ####  dynamic prediction
 surv<- predict(fit, t1obs=mT1.te,type="surv")
 rmst<- predict(fit, t1obs=mT1.te,type="rmst")
-rmst<- sapply(rmst$rmst, function(x)x$rmst)
+rmst <- predicted_values(rmst)
 
 ## naive Pr(D>t|D> t_m)
 surv0<- predict(fit, t1obs=mT1.te,type="surv",cause=0)
 rmst0<- predict(fit, t1obs=mT1.te,type="rmst",cause=0)
-rmst0<- sapply(rmst0$rmst, function(x)x$rmst)
+rmst0 <- predicted_values(rmst0)
 
 ## Pr(D>t|T_1=t_1,D> t_1)
 surv1<- predict(fit, t1obs=mT1.te,type="surv",cause=1,maxobs = FALSE)
 rmst1<- predict(fit, t1obs=mT1.te,type="rmst",cause=1,maxobs = FALSE)
-rmst1<- sapply(rmst1$rmst, function(x)x$rmst)
+rmst1 <- predicted_values(rmst1)
 
 ## Pr(D>t|T_1=t_1,D> t_m)
 surv1m<- predict(fit, t1obs=mT1.te,type="surv",cause=1,maxobs = TRUE)
 rmst1m<- predict(fit, t1obs=mT1.te,type="rmst",cause=1,maxobs = TRUE)
-rmst1m<- sapply(rmst1m$rmst, function(x)x$rmst)
+rmst1m <- predicted_values(rmst1m)
 
 ## compare with the true death time
 T2<- data$T2
@@ -101,6 +102,6 @@ apply(abs(cbind(T2-rmst,T2-rmst0,T2-rmst1,T2-rmst1m)^2),2,mean)
 
 }
 \seealso{
-\code{\link{mscr}}
+\code{\link{mscr}}, \code{\link{predicted_values}}
 }
 \keyword{survival}

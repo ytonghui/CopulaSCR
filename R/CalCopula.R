@@ -1,4 +1,4 @@
-#' @title Dependence Measures for Bivariate Copulas
+#' Dependence Measures for Bivariate Copulas
 #' @description  Compute Kendall's Tau of an Archimedean copula and
 #' copula parameter given the value of Kendall's Tau.
 #' @aliases Caltau

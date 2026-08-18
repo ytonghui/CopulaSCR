@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.R
 \name{summary.scrassonp}
 \alias{summary.scrassonp}
-\title{Summary method for scrassonp objects.}
+\title{Summarize an 'scrassonp' Object}
 \usage{
 \method{summary}{scrassonp}(object, conf.int = TRUE, ...)
 }

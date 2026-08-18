@@ -3,7 +3,7 @@
 \docType{data}
 \name{SCRdata}
 \alias{SCRdata}
-\title{Example semi-competing risks dataset with a single intermediate event}
+\title{Example Semi-Competing Risks Dataset with a Single Intermediate Event}
 \format{
 A data frame with 100 rows and 4 variables:
 \describe{

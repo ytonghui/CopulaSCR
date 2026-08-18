@@ -5,7 +5,7 @@
 ## for semi-competing risks data with multiple intermediate event times
 #################################################################
 
-#' Association analysis for semi-competing risks data with multiple intermediate event times
+#' Association Analysis for Semi-Competing Risks Data with Multiple Intermediate Event Times
 #'
 #' Fits a copula-based model for semi-competing risks data with multiple
 #' intermediate event times. The function first estimates the marginal survival
@@ -70,13 +70,15 @@
 #'       analyses.}
 #'   }
 #'
-#' @seealso \code{\link{plot.mscr}}
+#' @seealso \code{\link{plot.mscr}}, \code{\link{marginal_fit}}, \code{\link{terminal_survival}}
 #'
 #' @export
 #'
-#' @references Yu, Tonghui, and Xiang, Liming (2024).
-#'   Association analysis of multiple intermediate events and dynamic terminal prediction.
-#'   \emph{Working paper.}
+#' @references Yu, Tonghui, and Xiang, Liming (2026).
+#' Learning association from multiple intermediate events for dynamic prediction of survival:
+#' an application to cardiovascular disease prognosis.
+#' \emph{Biometrics}, 82(2), ujag087.
+#' \doi{10.1093/biomtc/ujag087}
 #'
 #' @references Yu, Tonghui, Zhang, Binhui, Xiang, Liming, Ma, Jianwei, and Chen, Chixiang. CopulaSCR: An R Package for the Analysis of Semi-competing Risks Data Using Copula-based Models.
 #' \emph{Working paper.}
@@ -99,7 +101,7 @@
 #' )
 #'
 #' print(fit)
-#' plot(fit$mar.fits[[1]])
+#' plot(marginal_fit(fit, event = 1))
 #' plot(fit, type = "msurv")
 #' plot(fit, type = "data")
 #' }
@@ -251,6 +253,8 @@ mscr<- function(mT1,T2,mevent1,event2,
   result$S_D<- S_D
   result$S_k<- S_k
   result$mar.fits<- t1fits
+  result$t1obs<- as.matrix(mT1)
+  result$t1obs[as.matrix(mevent1) == 0]<- NA_real_
   class(result)<- "mscr"
   return(result)
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.scrassonp}
 \alias{print.scrassonp}
-\title{Print objects in the scrassonp library}
+\title{Print an 'scrassonp' Object}
 \usage{
 \method{print}{scrassonp}(x, ...)
 }

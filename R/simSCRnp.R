@@ -1,5 +1,5 @@
 ###### simulate a random sample ########
-#' @title Simulating a semi-competing risks data from a copula-based parametric model
+#' Simulate Semi-Competing Risks Data from a Copula-Based Parametric Model
 #' @aliases simSCR
 #' @usage simSCR(n  = 100, cens.rate = 5, copulafam = "frank", tau = 0.5,
 #' params = list(marginsDist = rep("exp", 2),rate1 = 1,rate2 = 1))
@@ -65,7 +65,7 @@ simSCR<- function (n  = 100,cens.rate = 5,copulafam="frank",tau=0.5,
 
 
 
-#' @title Simulating a semi-competing risks data from a copula-based parametric model
+#' Simulate Stratified Semi-Competing Risks Data from a Copula-Based Parametric Model
 #' @aliases simSCRtr
 #' @usage simSCRtr(n  = 100, K = 2, cens.rate = 5, copulafam = "frank", tau = 0.5,
 #' params = list(marginsDist = rep("exp", 2),rate1 = 1,rate2 = 1))

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simmulSCR.R
 \name{simSCRmul}
 \alias{simSCRmul}
-\title{Simulating a semi-competing risks data with multiple intermediate events}
+\title{Simulate Semi-Competing Risks Data with Multiple Intermediate Events}
 \usage{
 simSCRmul(n  = 100, cens.rate = 20, K = 7, copulafam = "frank",
   tau.alpha = 0.5, tau.theta = seq(0.85, 0.2,length.out = K),

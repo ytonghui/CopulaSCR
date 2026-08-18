@@ -4,7 +4,7 @@
 ## The below functions are used for survival prediction for Semi-competing
 ## risks data with multiple intermediate event times
 #################################################################
-#' Survival prediction
+#' Survival Prediction
 #'
 #' Estimation of  marginal survival functions, joint survival function, cross-hazard ratio function
 #' and conditional survival function under semi-competing risks data with
@@ -24,14 +24,14 @@
 #' @param ... other arguments
 #' @return A list with components: t1, t2, and one of jsurv, msurv, csurv, and chr.
 #' @export
-#' @seealso \code{\link{scrassonp}}, \code{\link{scrsurv}}, \code{\link{predictscr}}
+#' @seealso \code{\link{scrassonp}}, \code{\link{scrsurv}}, \code{\link{predictscr}}, \code{\link{predicted_values}}
 #' @keywords survival
 #' @examples
 #' library(CopulaSCR)
 #' set.seed(12345)
 #' simdata<- simSCR(n = 50,tau = 0.5, copulafam = "frank")
-#' fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ 1,
-#'                     t2.formula=Surv(T2, event2) ~ 1,
+#' fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ 1,
+#'                     t2.formula=survival::Surv(T2, event2) ~ 1,
 #'                     data = simdata,copulafam="frank",
 #'                     a=quantile(simdata$T1,0.9),
 #'                     b=quantile(simdata$T2,0.9),B=10,seed = 12345,
@@ -51,8 +51,8 @@
 #' set.seed(12345)
 #' simdata2<- simSCRtr(n = 100,K=3, tau = c(0.3,0.5,0.6), copulafam = "frank",
 #'                     params=list(marginsDist = rep("exp",2), rate1=c(0.5,1,1.2),rate2=1))
-#' fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ tr,
-#'                     t2.formula=Surv(T2, event2) ~ tr,
+#' fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ tr,
+#'                     t2.formula=survival::Surv(T2, event2) ~ tr,
 #'                     data=simdata2, copulafam="frank",a=quantile(simdata2$T1,0.9),
 #'                     b=quantile(simdata2$T2,0.9),B=0)
 #' fittr<- scrsurv(fit = fitasso, method= "JFKC",surv2km=FALSE,B=0)
@@ -119,11 +119,23 @@
       NS <- length(fit.levels)
       fit.strata <- factor(fit.strata,levels=levels(fit.strata),labels=1:NS)
       requested.strata <- factor(requested.strata,levels=fit.levels,labels=1:NS)
-      strata<- rep(fit.strata,times=object$t1.surv$size.strata)
+      strata1 <- rep(
+        fit.strata,
+        times = object$t1.surv$size.strata
+      )
+      
+      strata2 <- rep(
+        fit.strata,
+        times = object$t2.surv$size.strata
+      )
 
       if(indx[2]!=0){
         if(is.null(t1))stop("a t1 argument is required")
-        survmat1<- data.frame(time=object$t1.surv$time,surv=object$t1.surv$surv,strata=strata)
+        survmat1 <- data.frame(
+          time = object$t1.surv$time,
+          surv = object$t1.surv$surv,
+          strata = strata1
+        )
 
 
         survfn1<- lapply(fit.strata,function(k){
@@ -146,7 +158,11 @@
 
       if(indx[3]!=0){
         if(is.null(t2))stop("a t2 argument is required")
-        survmat2<- data.frame(time=object$t2.surv$time,surv=object$t2.surv$surv,strata=strata)
+        survmat2 <- data.frame(
+          time = object$t2.surv$time,
+          surv = object$t2.surv$surv,
+          strata = strata2
+        )
         survfn2<- lapply(fit.strata,function(k){
           sv<- survmat2[survmat2[,3]==k,]
           stepfun(x= sv[,1],y=c(1,sv[,2]),right = FALSE,ties = max)
@@ -165,7 +181,9 @@
       }
     }
   }
-
+  if (type == "msurv") {
+    class(out) <- c("predmsurv", "list")
+  }
   if(type=="jsurv"){
     out<- predjsurv(fit=object, t1=t1, t2=t2, method = "sp",newdata =newdata)
   }
@@ -180,7 +198,7 @@
 }
 
 
-#' Dynamic terminal survival prediction
+#' Dynamic Terminal Survival Prediction
 #'
 #' Fitting semi-competing risks data with multiple intermediate event times using
 #' a copula-based model. Survival prediction for terminal event is dynamically estimated based on the updated observed
@@ -192,7 +210,8 @@
 #' @param times Evaluated time.
 #' @param type type=c("surv", "rrms", "rmst", "qrl","qst")
 #' @param type A character string specifying the prediction quantity to return.
-#' Possible values are \code{"surv"} for the survival function,
+#' Possible values are \code{"msurv"} for the marginal survival function,
+#' \code{"surv"} for the survival function,
 #' \code{"rrms"} for the restricted residual mean survival time,
 #' \code{"rmst"} for the restricted mean survival time, calculated as the
 #' restricted residual mean survival time plus the landmark time,
@@ -210,7 +229,7 @@
 #'   residual mean survival time, restricted mean survival time, quantile
 #'   residual lifetime, or quantile survival time.
 #' @keywords survival
-#' @seealso \code{\link{mscr}}
+#' @seealso \code{\link{mscr}}, \code{\link{predicted_values}}
 #' @export
 #' @examples
 #' \donttest{
@@ -229,22 +248,22 @@
 #' ####  dynamic prediction
 #' surv<- predict(fit, t1obs=mT1.te,type="surv")
 #' rmst<- predict(fit, t1obs=mT1.te,type="rmst")
-#' rmst<- sapply(rmst$rmst, function(x)x$rmst)
+#' rmst <- predicted_values(rmst)
 #'
 #' ## naive Pr(D>t|D> t_m)
 #' surv0<- predict(fit, t1obs=mT1.te,type="surv",cause=0)
 #' rmst0<- predict(fit, t1obs=mT1.te,type="rmst",cause=0)
-#' rmst0<- sapply(rmst0$rmst, function(x)x$rmst)
+#' rmst0 <- predicted_values(rmst0)
 #'
 #' ## Pr(D>t|T_1=t_1,D> t_1)
 #' surv1<- predict(fit, t1obs=mT1.te,type="surv",cause=1,maxobs = FALSE)
 #' rmst1<- predict(fit, t1obs=mT1.te,type="rmst",cause=1,maxobs = FALSE)
-#' rmst1<- sapply(rmst1$rmst, function(x)x$rmst)
+#' rmst1 <- predicted_values(rmst1)
 #'
 #' ## Pr(D>t|T_1=t_1,D> t_m)
 #' surv1m<- predict(fit, t1obs=mT1.te,type="surv",cause=1,maxobs = TRUE)
 #' rmst1m<- predict(fit, t1obs=mT1.te,type="rmst",cause=1,maxobs = TRUE)
-#' rmst1m<- sapply(rmst1m$rmst, function(x)x$rmst)
+#' rmst1m <- predicted_values(rmst1m)
 #'
 #' ## compare with the true death time
 #' T2<- data$T2
@@ -255,20 +274,36 @@
 #'}
 #'
 #'
-"predict.mscr"<- function(object, t1obs,times= knots(object$S_D),cause = NULL,
+"predict.mscr"<- function(object, t1obs = NULL,times= knots(object$S_D),cause = NULL,
                           type=c("msurv","surv", "rrms", "rmst", "qrl","qst"),
                           tu=max(knots(object$S_D)),tau=0.5,nsim=1000,maxobs=TRUE,...){
   type<- match.arg(type)
+  if (is.null(t1obs)) {
+    t1obs<- object$t1obs
+  }
+  
+  if (is.null(t1obs)) {
+    stop(
+      "'t1obs' was not supplied and is not stored in the fitted object.",
+      call. = FALSE
+    )
+  }
+  
   if(type!="msurv"){
     if(is.null(cause)){
-      predictMSCR(object, t1obs,times,type,tu,tau,nsim,...)
+      out<- predictMSCR(object, t1obs,times,type,tu,tau,nsim,...)
     }else{
-      predbsMSCR(object, t1obs,times,type,tu,tau,cause,maxobs,...)
+      out<- predbsMSCR(object, t1obs,times,type,tu,tau,cause,maxobs,...)
     }
+    attr(out, "type") <- type
+    class(out) <- c("predmscr", "list")
+    return(out)
   }else{
     ms<- lapply(1:length(object$mar.fits),function(k)
       predict(object=object$mar.fits[[k]],t1=t1obs[,k], type="msurv"))
     names(ms)<- names(object$mar.fits)
+    attr(ms, "type") <- "msurv"
+    class(ms) <- c("predmscr", "list")
     return(ms)
   }
 

@@ -3,7 +3,7 @@
 \docType{data}
 \name{SCRdata_by_tr}
 \alias{SCRdata_by_tr}
-\title{Example semi-competing risks dataset by treatment group}
+\title{Example Semi-Competing Risks Dataset by Treatment Group}
 \format{
 A data frame with 500 rows and 5 variables:
 \describe{

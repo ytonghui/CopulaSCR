@@ -5,7 +5,7 @@
 \alias{predjsurv}
 \alias{predcsurv}
 \alias{predchr}
-\title{Survival prediction}
+\title{Survival Prediction}
 \usage{
 predictscr(data, fit, t1.formula, t2.formula, type = c("jsurv","csurv","chr"),
    t1, t2, s2, t1equal = FALSE, method = c("np", "sp"),...)
@@ -32,7 +32,10 @@ time, of the form \code{response ~ predictors}. The \code{response} is a
 \item{t2.formula}{an optional formula expression for the terminal event
 time, of the form \code{response ~ predictors}.}
 
-\item{type}{specifies the type of function to be estimated.}
+\item{type}{A character string specifying the prediction quantity.
+Possible values are \code{"jsurv"} (the default) for the joint survival
+function, \code{"csurv"} for the conditional survival function, and
+\code{"chr"} for the cross-hazard ratio function.}
 
 \item{t1}{numeric vector. See Value.}
 
@@ -75,8 +78,8 @@ single intermediate event.
 library(CopulaSCR)
 set.seed(12345)
 simdata<- simSCR(n = 50,tau = 0.5, copulafam = "frank")
-fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ 1,
-                    t2.formula=Surv(T2, event2) ~ 1,
+fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ 1,
+                    t2.formula=survival::Surv(T2, event2) ~ 1,
                     data = simdata,copulafam="frank",
                     a=quantile(simdata$T1,0.9),
                     b=quantile(simdata$T2,0.9),B=10,seed = 12345,
@@ -103,30 +106,32 @@ chr2<- predictscr(fit=fit22,t1=t1, t2=t2,method="sp",type="chr")
 
 ## plot jsurv and chr
 library(graphics)
-filled.contour(x=t1,y=t2,z=do.call(rbind,js$jsurv),nlevels = 30,
+filled.contour(x=t1,y=t2,z=do.call(rbind,predicted_values(js)),nlevels = 30,
 xlab="t1",ylab="t2",main = "joint survival function",
 plot.axes = {axis(1, seq(0,3.5,0.5))
   axis(2, seq(0,3.5,0.5))
-    contour(x = t1,y=t2,do.call(rbind,js$jsurv),
+    contour(x = t1,y=t2,do.call(rbind,predicted_values(js)),
     add = TRUE, lwd = 2)})
 
 
-filled.contour(x=t1,y=t2,z=do.call(rbind,chr$chr),nlevels = 30,
+filled.contour(x=t1,y=t2,z=do.call(rbind,predicted_values(chr)),nlevels = 30,
 xlab="t1",ylab="t2",main = "cross-hazard ratio",
 plot.axes = {axis(1, seq(0,3.5,0.5))
  axis(2, seq(0,3.5,0.5))
- contour(x = t1,y=t2,do.call(rbind,chr$chr),
+ contour(x = t1,y=t2,do.call(rbind,predicted_values(chr)),
  add = TRUE, lwd = 2)})
 
 # conditional survival probabilities
 t1<- s2<- c(0.2,0.5,1)
 t2<-  seq(0,3.5,0.1)
-cs<- predcsurv(fit=fit22,t1=t1, t2=t2, s2=s2, t1equal =TRUE,method="sp")$csurv
+cs<- predcsurv(fit=fit22,t1=t1, t2=t2, s2=s2, t1equal =TRUE,method="sp")
+cs <- predicted_values(cs)
 # same with
-cs2<- predictscr(fit=fit22,t1=t1, t2=t2, s2=s2, t1equal =TRUE,
- method="sp",type="csurv")$csurv
+cs2<- predictscr(fit=fit22,t1=t1, t2=t2, s2=s2, t1equal =TRUE,method="sp",type="csurv")
+cs2 <- predicted_values(cs2)
 # or semiparametric estimator
-# cs2<- predict(fit=fit22,t1=t1, t2=t2,s2=s2, t1equal =TRUE,type="csurv")$csurv
+# cs2<- predict(fit=fit22,t1=t1, t2=t2,s2=s2, t1equal =TRUE,type="csurv")
+# cs2 <- predicted_values(cs2)
 
 ## plot csurv
 cs<- lapply(seq(length(cs)),function(k)cs[[k]][,k])
@@ -138,5 +143,5 @@ legend(x="topright",legend = paste0("t1=",t1),col = 1:length(cs),lty=1)
 
 }
 \seealso{
-\code{\link{scrassonp}}, \code{\link{scrsurv}},\code{\link{predict.scrsurv}}
+\code{\link{scrassonp}}, \code{\link{scrsurv}}, \code{\link{predict.scrsurv}}, \code{\link{predicted_values}}
 }

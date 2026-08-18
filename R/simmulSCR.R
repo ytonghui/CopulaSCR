@@ -1,5 +1,4 @@
-
-#' @title  Simulating a semi-competing risks data with multiple intermediate events
+#' Simulate Semi-Competing Risks Data with Multiple Intermediate Events
 #' @aliases simSCRmul
 #' @description
 #' Simulating a semi-competing risks data with multiple intermediate events from a copula-based parametric model

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.mscr}
 \alias{plot.mscr}
-\title{Plot of 'mscr' object}
+\title{Plot an 'mscr' Object}
 \usage{
 \method{plot}{mscr}(
   x,
@@ -46,7 +46,7 @@ a character vector c("solid", "dashed").}
 No return value.
 }
 \description{
-Plot of 'mscr' object
+Plot an 'mscr' Object
 }
 \seealso{
 \code{\link{mscr}}

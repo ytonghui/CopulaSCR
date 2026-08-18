@@ -1,4 +1,4 @@
-#' @title Nonparametric estimation of marginal survival functions
+#' Nonparametric Estimation of Marginal Survival Functions
 #'
 #' @description Fitting a semiparametric copula-based model with pre-specified
 #'   Archimedean copula. Plugging estimated copula parameter solving from a
@@ -101,21 +101,21 @@
 #'
 #'
 #'
-#' @seealso  \code{\link{scrassonp}}
+#' @seealso  \code{\link{scrassonp}}, \code{\link{association_estimates}}
 #' @importFrom survival survfit Surv
 #'
 #' @examples
 #' set.seed(12345)
 #' simdata<- simSCR(n = 50,tau = 0.5, copulafam = "frank")
-#' fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ 1,
-#'          t2.formula=Surv(T2, event2) ~ 1,
+#' fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ 1,
+#'          t2.formula=survival::Surv(T2, event2) ~ 1,
 #'          data = simdata, copulafam="frank",
 #'          a=quantile(simdata$T1,0.9),
 #'          b=quantile(simdata$T2,0.9),B=10,seed = 12345,
 #'          se = TRUE,se.method = "resampling")
 #'
 #' \donttest{
-#' c(tau.est = fitasso$tau, tau.se = fitasso$tau.se)
+#' association_estimates(fitasso)
 #' fit21<- scrsurv(fit = fitasso, method= "JFKC",surv2km=FALSE,B=10,
 #' se.method = "resampling",conf.int=TRUE,conftype =1,seed = 12345)
 #' plot(fit21,conf.int = TRUE)
@@ -124,7 +124,7 @@
 #' plot(fit22,conf.int = TRUE)
 #'
 #' #####  estimation of nonparametric marginals with specified Kendall's tau
-#' fit1<- scrsurv(t1.formula=Surv(T1, event1) ~ 1, t2.formula=Surv(T2, event2) ~ 1,
+#' fit1<- scrsurv(t1.formula=survival::Surv(T1, event1) ~ 1, t2.formula=survival::Surv(T2, event2) ~ 1,
 #' data =simdata, tau=0.5,copulafam="frank", B=10,
 #' method= "FJC",se.method = "bootstrap",conf.int=TRUE,seed = 12345)
 #' plot(fit1,conf.int = TRUE)
@@ -133,12 +133,12 @@
 #' set.seed(12345)
 #' simdata2<- simSCRtr(n = 500,K=3, tau = c(0.3,0.5,0.6), copulafam = "frank",
 #'                     params=list(marginsDist = rep("exp",2), rate1=c(0.5,1,1.2),rate2=1))
-#' fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ tr,
-#'                     t2.formula=Surv(T2, event2) ~ tr,
+#' fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ tr,
+#'                     t2.formula=survival::Surv(T2, event2) ~ tr,
 #'                     data=simdata2, copulafam="frank",
 #'                     a=quantile(simdata2$T1,0.9), b=quantile(simdata2$T2,0.9),
 #'                     B=10,seed = 12345,se = TRUE,se.method = "resampling")
-#' c(tau.est = round(fitasso$tau, 2), tau.se = round(fitasso$tau.se, 2))
+#' round(association_estimates(fitasso),2)
 #'
 #' fit21tr<- scrsurv(fit = fitasso, method= "JFKC",surv2km=FALSE,B=10,seed = 12345,
 #'                   se.method = "resampling",conf.int=TRUE,conftype =1)
@@ -1249,12 +1249,16 @@ RepNAmin <- function(x){
 surv_transform<- function(survlist,inverse=FALSE,conf.int,t1data,t2data){
 
   if(!isTRUE(inverse)){
-    size.strata<- t1data$size.strata
     ## when ns>1 preform transformation for surv list
     ns<- length(survlist)
     newlist<- list()
 
     surv1<- lapply(survlist,function(x)x$t1.surv)
+    size.strata1 <- vapply(
+      surv1,
+      function(x) length(x$time),
+      integer(1L)
+    )
 
     newlist$t1.surv$time<- do.call("c",lapply(surv1,function(x)x$time))
     newlist$t1.surv$n.risk<- do.call("c",lapply(surv1,function(x)x$n.risk))
@@ -1263,8 +1267,10 @@ surv_transform<- function(survlist,inverse=FALSE,conf.int,t1data,t2data){
     newlist$t1.surv$surv<- do.call("c",lapply(surv1,function(x)x$surv))
     newlist$t1.surv$cumhaz<- do.call("c",lapply(surv1,function(x)x$cumhaz))
 
-    newlist$t1.surv$first.strata<- cumsum(c(1,size.strata))[1:length(size.strata)]
-    newlist$t1.surv$size.strata<- size.strata
+    newlist$t1.surv$first.strata <-
+      cumsum(c(1, size.strata1))[1:length(size.strata1)]
+    
+    newlist$t1.surv$size.strata <- size.strata1
     newlist$t1.surv$X<- t1data$stratas
     # newlist$t1.surv$maxtime<- max(newlist$t1.surv$time)
 
@@ -1274,6 +1280,11 @@ surv_transform<- function(survlist,inverse=FALSE,conf.int,t1data,t2data){
 
 
     surv2<- lapply(survlist,function(x)x$t2.surv)
+    size.strata2 <- vapply(
+      surv2,
+      function(x) length(x$time),
+      integer(1L)
+    )
 
     newlist$t2.surv$time<- do.call("c",lapply(surv2,function(x)x$time))
     newlist$t2.surv$n.risk<- do.call("c",lapply(surv2,function(x)x$n.risk))
@@ -1282,8 +1293,10 @@ surv_transform<- function(survlist,inverse=FALSE,conf.int,t1data,t2data){
     newlist$t2.surv$surv<- do.call("c",lapply(surv2,function(x)x$surv))
     newlist$t2.surv$cumhaz<- do.call("c",lapply(surv2,function(x)x$cumhaz))
 
-    newlist$t2.surv$first.strata<- cumsum(c(1,size.strata))[1:length(size.strata)]
-    newlist$t2.surv$size.strata<- size.strata
+    newlist$t2.surv$first.strata <-
+      cumsum(c(1, size.strata2))[1:length(size.strata2)]
+    
+    newlist$t2.surv$size.strata <- size.strata2
 
     # newlist$t2.surv$maxtime<- max(newlist$t2.surv$time)
     newlist$t2.surv$X<- t2data$stratas

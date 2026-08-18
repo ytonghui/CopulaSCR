@@ -4,7 +4,7 @@
 ## The below functions are used for association analysis for semi-competing
 ## risks data with single intermediate event time
 #################################################################
-#' @title Concordance estimator for association parameter
+#' Concordance Estimator for the Association Parameter
 #' @description  Fitting a semiparametric copula-based model with pre-specified Archimedean copula.
 #' The copula parameter is solved from a generalized concordance estimating equations proposed by Lakhal et al. (2008).
 #' @aliases scrassonp
@@ -74,26 +74,26 @@
 #' @examples
 #' set.seed(12345)
 #' simdata<- simSCR(n = 100,tau = 0.5, copulafam = "frank")
-#' fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ 1,
-#'                     t2.formula=Surv(T2, event2) ~ 1,
+#' fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ 1,
+#'                     t2.formula=survival::Surv(T2, event2) ~ 1,
 #'                     data = simdata, copulafam="frank",
 #'                     a=quantile(simdata$T1,0.9), b=quantile(simdata$T2,0.9),
 #'                     B=20,seed = 12345,se = TRUE,se.method = "resampling")
-#' c(tau.est = fitasso$tau, tau.se = fitasso$tau.se)
+#' association_estimates(fitasso)
 #' # tau.est = 0.5216944 tau.se =  0.0891336
 #'
 #' set.seed(12345)
 #' simdata<- simSCRtr(n = 100,K=3, tau = c(0.3,0.5,0.6), copulafam = "frank",
 #'                    params=list(marginsDist = rep("exp",2),
 #'                                rate1=c(0.5,1,1.2),rate2=1))
-#' fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ tr,
-#'                     t2.formula=Surv(T2, event2) ~ tr,
+#' fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ tr,
+#'                     t2.formula=survival::Surv(T2, event2) ~ tr,
 #'                     data=simdata, copulafam="frank",
 #'                     a=quantile(simdata$T1,0.9), b=quantile(simdata$T2,0.9),
 #'                     B=20,seed = 12345,se = TRUE,se.method = "resampling")
-#' c(tau.est = round(fitasso$tau, 2), tau.se = round(fitasso$tau.se, 2))
+#' round(association_estimates(fitasso),2)
 #' # tau.est = 0.39 0.51 0.69 tau.se =  0.38 0.14 0.1
-#' @seealso  \code{\link{scrsurv}}
+#' @seealso  \code{\link{scrsurv}}, \code{\link{association_estimates}}
 #'
 scrassonp<- function(t1.formula, t2.formula,data= parent.frame(),
                      equalweight = FALSE,model=TRUE,a=0,b=0,positive=TRUE,tol=1e-5,
@@ -140,6 +140,10 @@ scrassonp<- function(t1.formula, t2.formula,data= parent.frame(),
   }
   out$t1data<- t1data
   out$t2data<- t2data
+  if (t1data$nstrata > 1) {
+    out$stratas <- t1data$stratas
+  }
+  
   if(isTRUE(model)){
     out$data<- data
 

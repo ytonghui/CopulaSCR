@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.mscr}
 \alias{print.mscr}
-\title{Print objects in the mscr library}
+\title{Print an 'mscr' Object}
 \usage{
 \method{print}{mscr}(x, ...)
 }

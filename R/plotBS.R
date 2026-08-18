@@ -1,4 +1,4 @@
-#' Brier Scores for terminal survival prediction
+#' Brier Scores for Terminal Survival Prediction
 #' @aliases dyBS
 #' @usage dyBS(surv, S_D, T2, event2, times=knots(S_D), reference = TRUE,
 #'   tu=NULL, int.method=c("none","fmm","natural","periodic","monoH.FC","hyman"))
@@ -48,11 +48,15 @@
 #' surv1m<- predict(fit, t1obs=mT1.te,type="surv",cause=1,maxobs = TRUE)
 #'
 #' ### Brier Scores
-#' BS<- dyBS(surv,S_D = fit$S_D,T2=data$T2,event2=data$event2,int.method = "natural")
-#' BS0<- dyBS(surv0,S_D = fit$S_D,T2=data$T2,event2=data$event2,int.method = "natural")
-#' BS1<- dyBS(surv1,S_D = fit$S_D,T2=data$T2,event2=data$event2,int.method = "natural")
-#' BS1m<- dyBS(surv1m,S_D = fit$S_D,T2=data$T2,event2=data$event2,int.method = "natural")
-#' (ibs<-c(BS$IBS,BS0$IBS,BS1$IBS,BS1m$IBS)) ## integrated BS
+#' S_D<- terminal_survival(fit)
+#' BS<- dyBS(surv,S_D = S_D,T2=data$T2,event2=data$event2,int.method = "natural")
+#' BS0<- dyBS(surv0,S_D = S_D,T2=data$T2,event2=data$event2,int.method = "natural")
+#' BS1<- dyBS(surv1,S_D = S_D,T2=data$T2,event2=data$event2,int.method = "natural")
+#' BS1m<- dyBS(surv1m,S_D = S_D,T2=data$T2,event2=data$event2,int.method = "natural")
+#' ibs<-c(integrated_brier_score(BS),
+#'   integrated_brier_score(BS0),
+#'   integrated_brier_score(BS1),
+#'   integrated_brier_score(BS1m)) ## integrated BS
 #'
 #' ### plot Brier Scores
 #' plot(BS$BS,ylim = c(0,0.7),type="l",xlab="time",ylab="Brier Score",col=1)
@@ -109,13 +113,16 @@ dyBS<- function(surv,S_D,T2,event2,times=knots(S_D),
     RBS<- 1- BS/BS00
     RBS[is.na(RBS)|is.infinite(RBS)]<- 0
     IRBS=1/diff(range(times))*sum(RBS*diff(c(times,max(times))),na.rm =TRUE)
-
-    return(list(BS=data.frame(time=times,BS=BS),
-                RBS=data.frame(time=times,RBS=RBS),
-                IBS=IBS,IRBS=IRBS))
+    out<- list(BS=data.frame(time=times,BS=BS),
+               RBS=data.frame(time=times,RBS=RBS),
+               IBS=IBS,IRBS=IRBS)
+    class(out) <- c("dyBS", "list")
+    return(out)
 
   }else{
-    return(list(BS=data.frame(time=times,BS=BS),IBS=IBS))
+    out<- list(BS=data.frame(time=times,BS=BS),IBS=IBS)
+    class(out) <- c("dyBS", "list")
+    return(out)
   }
 
 

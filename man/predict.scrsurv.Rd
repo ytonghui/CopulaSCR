@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict.R
 \name{predict.scrsurv}
 \alias{predict.scrsurv}
-\title{Survival prediction}
+\title{Survival Prediction}
 \usage{
 \method{predict}{scrsurv}(
   object,
@@ -50,8 +50,8 @@ single intermediate event.
 library(CopulaSCR)
 set.seed(12345)
 simdata<- simSCR(n = 50,tau = 0.5, copulafam = "frank")
-fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ 1,
-                    t2.formula=Surv(T2, event2) ~ 1,
+fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ 1,
+                    t2.formula=survival::Surv(T2, event2) ~ 1,
                     data = simdata,copulafam="frank",
                     a=quantile(simdata$T1,0.9),
                     b=quantile(simdata$T2,0.9),B=10,seed = 12345,
@@ -71,8 +71,8 @@ js<- predict(fit,t1=t1, t2=t2,type="jsurv")
 set.seed(12345)
 simdata2<- simSCRtr(n = 100,K=3, tau = c(0.3,0.5,0.6), copulafam = "frank",
                     params=list(marginsDist = rep("exp",2), rate1=c(0.5,1,1.2),rate2=1))
-fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ tr,
-                    t2.formula=Surv(T2, event2) ~ tr,
+fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ tr,
+                    t2.formula=survival::Surv(T2, event2) ~ tr,
                     data=simdata2, copulafam="frank",a=quantile(simdata2$T1,0.9),
                     b=quantile(simdata2$T2,0.9),B=0)
 fittr<- scrsurv(fit = fitasso, method= "JFKC",surv2km=FALSE,B=0)
@@ -85,6 +85,6 @@ chr2<- predict(fittr,t1=t1, t2=t2, type="chr",newdata=simdata2[1:3,])
 
 }
 \seealso{
-\code{\link{scrassonp}}, \code{\link{scrsurv}}, \code{\link{predictscr}}
+\code{\link{scrassonp}}, \code{\link{scrsurv}}, \code{\link{predictscr}}, \code{\link{predicted_values}}
 }
 \keyword{survival}

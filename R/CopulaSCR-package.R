@@ -1,4 +1,4 @@
-#' CopulaSCR: Algorithms for fitting copula-based semi-competing risks models
+#' CopulaSCR: Algorithms for Fitting Copula-Based Semi-Competing Risks Models
 #'
 #' The package offers a comprehensive collection of practical and easy-to-use tools for analyzing
 #' semi-competing risks with single or multiple intermediate event times and a (possibly) correlated terminal event.

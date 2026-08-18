@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.scrsurv}
 \alias{print.scrsurv}
-\title{Print objects in the scrsurv library}
+\title{Print an 'scrsurv' Object}
 \usage{
 \method{print}{scrsurv}(x, ...)
 }

@@ -4,7 +4,7 @@
 ## The below functions are used for survival prediction for Semi-competing
 ## risks data with single intermediate event times
 #################################################################
-#' @title Survival prediction
+#' Survival Prediction
 #' @description
 #' Estimation of  joint survival function, cross-hazard ratio function
 #' and conditional survival function under semi-competing risks data with
@@ -28,6 +28,10 @@
 #'   occurring in the formula.
 #' @param fit an optional object of class  "scrsurv".
 #' @param type specifies the type of function to be estimated.
+#' @param type A character string specifying the prediction quantity.
+#'   Possible values are \code{"jsurv"} (the default) for the joint survival
+#'   function, \code{"csurv"} for the conditional survival function, and
+#'   \code{"chr"} for the cross-hazard ratio function.
 #' @param t1.formula  an optional formula expression for the nonterminal event
 #'   time, of the form \code{response ~ predictors}. The \code{response} is a
 #'   \code{Surv} object with right censoring. See the documentation of
@@ -62,12 +66,12 @@
 #' @export predchr
 #' @export predcsurv
 #'
-#' @seealso \code{\link{scrassonp}}, \code{\link{scrsurv}},\code{\link{predict.scrsurv}}
+#' @seealso \code{\link{scrassonp}}, \code{\link{scrsurv}}, \code{\link{predict.scrsurv}}, \code{\link{predicted_values}}
 #' @examples library(CopulaSCR)
 #' set.seed(12345)
 #' simdata<- simSCR(n = 50,tau = 0.5, copulafam = "frank")
-#' fitasso<- scrassonp(t1.formula=Surv(T1, event1) ~ 1,
-#'                     t2.formula=Surv(T2, event2) ~ 1,
+#' fitasso<- scrassonp(t1.formula=survival::Surv(T1, event1) ~ 1,
+#'                     t2.formula=survival::Surv(T2, event2) ~ 1,
 #'                     data = simdata,copulafam="frank",
 #'                     a=quantile(simdata$T1,0.9),
 #'                     b=quantile(simdata$T2,0.9),B=10,seed = 12345,
@@ -94,30 +98,32 @@
 #'
 #' ## plot jsurv and chr
 #' library(graphics)
-#' filled.contour(x=t1,y=t2,z=do.call(rbind,js$jsurv),nlevels = 30,
+#' filled.contour(x=t1,y=t2,z=do.call(rbind,predicted_values(js)),nlevels = 30,
 #' xlab="t1",ylab="t2",main = "joint survival function",
 #' plot.axes = {axis(1, seq(0,3.5,0.5))
 #'   axis(2, seq(0,3.5,0.5))
-#'     contour(x = t1,y=t2,do.call(rbind,js$jsurv),
+#'     contour(x = t1,y=t2,do.call(rbind,predicted_values(js)),
 #'     add = TRUE, lwd = 2)})
 #'
 #'
-#' filled.contour(x=t1,y=t2,z=do.call(rbind,chr$chr),nlevels = 30,
+#' filled.contour(x=t1,y=t2,z=do.call(rbind,predicted_values(chr)),nlevels = 30,
 #' xlab="t1",ylab="t2",main = "cross-hazard ratio",
 #' plot.axes = {axis(1, seq(0,3.5,0.5))
 #'  axis(2, seq(0,3.5,0.5))
-#'  contour(x = t1,y=t2,do.call(rbind,chr$chr),
+#'  contour(x = t1,y=t2,do.call(rbind,predicted_values(chr)),
 #'  add = TRUE, lwd = 2)})
 #'
 #' # conditional survival probabilities
 #' t1<- s2<- c(0.2,0.5,1)
 #' t2<-  seq(0,3.5,0.1)
-#' cs<- predcsurv(fit=fit22,t1=t1, t2=t2, s2=s2, t1equal =TRUE,method="sp")$csurv
+#' cs<- predcsurv(fit=fit22,t1=t1, t2=t2, s2=s2, t1equal =TRUE,method="sp")
+#' cs <- predicted_values(cs)
 #' # same with
-#' cs2<- predictscr(fit=fit22,t1=t1, t2=t2, s2=s2, t1equal =TRUE,
-#'  method="sp",type="csurv")$csurv
+#' cs2<- predictscr(fit=fit22,t1=t1, t2=t2, s2=s2, t1equal =TRUE,method="sp",type="csurv")
+#' cs2 <- predicted_values(cs2)
 #' # or semiparametric estimator
-#' # cs2<- predict(fit=fit22,t1=t1, t2=t2,s2=s2, t1equal =TRUE,type="csurv")$csurv
+#' # cs2<- predict(fit=fit22,t1=t1, t2=t2,s2=s2, t1equal =TRUE,type="csurv")
+#' # cs2 <- predicted_values(cs2)
 #'
 #' ## plot csurv
 #' cs<- lapply(seq(length(cs)),function(k)cs[[k]][,k])
@@ -232,8 +238,10 @@ predjsurv<- function(data,fit,t1.formula, t2.formula,t1, t2,method=c("np","sp"),
     }else{
       js<- js0
     }
-    names(js)<-  paste0("t1=",t1)
-    return(list(jsurv=js,t1=t1,t2=t2))
+    names(js)<- paste0("t1=",t1)
+    out<- list(jsurv=js,t1=t1,t2=t2)
+    class(out) <- c("predjsurv", "list")
+    return(out)
   }
 
   if(method=="sp"){
@@ -271,10 +279,24 @@ predjsurv<- function(data,fit,t1.formula, t2.formula,t1, t2,method=c("np","sp"),
       fit.strata <- factor(fit.strata,levels=levels(fit.strata),labels=1:NS)
       requested.strata <- factor(requested.strata,levels=fit.levels,labels=1:NS)
       strata<- rep(fit.strata,times=fit$t1.surv$size.strata)
-      copulaparam<- copulaparam[requested.strata]
-
-
-      survmat1<- data.frame(time=surv1$time,surv=surv1$surv,strata=strata)
+      strata1 <- rep(
+        fit.strata,
+        times = fit$t1.surv$size.strata
+      )
+      
+      strata2 <- rep(
+        fit.strata,
+        times = fit$t2.surv$size.strata
+      )
+      
+      copulaparam <- copulaparam[requested.strata]
+      
+      
+      survmat1 <- data.frame(
+        time = surv1$time,
+        surv = surv1$surv,
+        strata = strata1
+      )
       survfn1<- lapply(fit.strata,function(k){
         sv<- survmat1[survmat1[,3]==k,]
         stats::stepfun(x= sv[,1],y=c(1,sv[,2]),right = FALSE,ties = max)
@@ -283,7 +305,11 @@ predjsurv<- function(data,fit,t1.formula, t2.formula,t1, t2,method=c("np","sp"),
       s1.t1<- lapply(psurv1,function(x)x(t1))
 
 
-      survmat2<- data.frame(time=surv2$time,surv=surv2$surv,strata=strata)
+      survmat2 <- data.frame(
+        time = surv2$time,
+        surv = surv2$surv,
+        strata = strata2
+      )
       survfn2<- lapply(fit.strata,function(k){
         sv<- survmat2[survmat2[,3]==k,]
         stats::stepfun(x= sv[,1],y=c(1,sv[,2]),right = FALSE,ties = max)
@@ -304,8 +330,9 @@ predjsurv<- function(data,fit,t1.formula, t2.formula,t1, t2,method=c("np","sp"),
 
     }
 
-
-    return(list(jsurv=js,t1=t1,t2=t2,copulafam=copulafam,copulaparam=copulaparam))
+    out<- list(jsurv=js,t1=t1,t2=t2,copulafam=copulafam,copulaparam=copulaparam)
+    class(out) <- c("predjsurv", "list")
+    return(out)
   }
 }
 
@@ -356,7 +383,9 @@ predchr<- function(data,fit,t1.formula, t2.formula, t1, t2,method=c("np","sp"),
         npCHRfit(s=xx,param = copulaparam,copulafam = copulafam))
     }
 
-    return(list(chr=chr,t1=t1,t2=t2))
+    out<- list(chr=chr,t1=t1,t2=t2)
+    class(out) <- c("predchr", "list")
+    return(out)
   }
 
   if(method=="sp"){
@@ -386,15 +415,11 @@ predchr<- function(data,fit,t1.formula, t2.formula, t1, t2,method=c("np","sp"),
       })
       names(chr)<- names(js)
     }
-
-    return(list(chr=chr,t1=t1,t2=t2,copulaparam=copulaparam,copulafam = copulafam))
+    
+    out<- list(chr=chr,t1=t1,t2=t2,copulaparam=copulaparam,copulafam = copulafam)
+    class(out) <- c("predchr", "list")
+    return(out)
   }
-
-
-
-
-
-
 }
 
 
@@ -479,7 +504,9 @@ predcsurv<- function(data,fit,t1.formula, t2.formula,t1, t2, s2,
 
     condsurv<- lapply(1:length(t1), function(k)t1s2matNA(x=condsurv[[k]],tt1=t1[k],s2))
     names(condsurv)<- paste0("t1=",t1)
-    return(list(csurv = condsurv,t1=t1,t2=t2,s2=s2))
+    out<- list(csurv = condsurv,t1=t1,t2=t2,s2=s2)
+    class(out) <- c("predcsurv", "list")
+    return(out)
   }
   if(method=="sp"){
     if (indx[2]==0) stop("a fit argument is required")
@@ -518,11 +545,24 @@ predcsurv<- function(data,fit,t1.formula, t2.formula,t1, t2, s2,
       NS <- length(fit.levels)
       fit.strata <- factor(fit.strata,levels=levels(fit.strata),labels=1:NS)
       requested.strata <- factor(requested.strata,levels=fit.levels,labels=1:NS)
-      strata<- rep(fit.strata,times=fit$t1.surv$size.strata)
-      copulaparam<- copulaparam[requested.strata]
-
-
-      survmat1<- data.frame(time=surv1$time,surv=surv1$surv,strata=strata)
+      strata1 <- rep(
+        fit.strata,
+        times = fit$t1.surv$size.strata
+      )
+      
+      strata2 <- rep(
+        fit.strata,
+        times = fit$t2.surv$size.strata
+      )
+      
+      copulaparam <- copulaparam[requested.strata]
+      
+      
+      survmat1 <- data.frame(
+        time = surv1$time,
+        surv = surv1$surv,
+        strata = strata1
+      )
       survfn1<- lapply(fit.strata,function(k){
         sv<- survmat1[survmat1[,3]==k,]
         stats::stepfun(x= sv[,1],y=c(1,sv[,2]),right = FALSE,ties = max)
@@ -531,7 +571,11 @@ predcsurv<- function(data,fit,t1.formula, t2.formula,t1, t2, s2,
       s1.t1<- lapply(psurv1,function(x)x(t1))
 
 
-      survmat2<- data.frame(time=surv2$time,surv=surv2$surv,strata=strata)
+      survmat2 <- data.frame(
+        time = surv2$time,
+        surv = surv2$surv,
+        strata = strata2
+      )
       survfn2<- lapply(fit.strata,function(k){
         sv<- survmat2[survmat2[,3]==k,]
         stats::stepfun(x= sv[,1],y=c(1,sv[,2]),right = FALSE,ties = max)
@@ -615,7 +659,9 @@ predcsurv<- function(data,fit,t1.formula, t2.formula,t1, t2, s2,
         a})
       names(condsurv)<- paste(strata.vars,requested.X[,1],sep="=")
     }
-    return(list(csurv = condsurv,t1=t1,t2=t2,s2=s2))
+    out<- list(csurv = condsurv,t1=t1,t2=t2,s2=s2)
+    class(out) <- c("predcsurv", "list")
+    return(out)
   }
 
 }

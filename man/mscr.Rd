@@ -2,7 +2,7 @@
 % Please edit documentation in R/mscr.R
 \name{mscr}
 \alias{mscr}
-\title{Association analysis for semi-competing risks data with multiple intermediate event times}
+\title{Association Analysis for Semi-Competing Risks Data with Multiple Intermediate Event Times}
 \usage{
 mscr(mT1,T2,mevent1,event2, 
             copulafam=c("frank","clayton","joe","gumbel","amh"), 
@@ -103,7 +103,7 @@ fit <- mscr(
 )
 
 print(fit)
-plot(fit$mar.fits[[1]])
+plot(marginal_fit(fit, event = 1))
 plot(fit, type = "msurv")
 plot(fit, type = "data")
 }
@@ -111,13 +111,15 @@ plot(fit, type = "data")
 
 }
 \references{
-Yu, Tonghui, and Xiang, Liming (2024).
-  Association analysis of multiple intermediate events and dynamic terminal prediction.
-  \emph{Working paper.}
+Yu, Tonghui, and Xiang, Liming (2026).
+Learning association from multiple intermediate events for dynamic prediction of survival:
+an application to cardiovascular disease prognosis.
+\emph{Biometrics}, 82(2), ujag087.
+\doi{10.1093/biomtc/ujag087}
 
 Yu, Tonghui, Zhang, Binhui, Xiang, Liming, Ma, Jianwei, and Chen, Chixiang. CopulaSCR: An R Package for the Analysis of Semi-competing Risks Data Using Copula-based Models.
 \emph{Working paper.}
 }
 \seealso{
-\code{\link{plot.mscr}}
+\code{\link{plot.mscr}}, \code{\link{marginal_fit}}, \code{\link{terminal_survival}}
 }
