@@ -19,7 +19,7 @@ A data frame with 100 rows and 7 variables:
 \source{
 Kallfelz, M. et al. (2021). MIMIC-IV demo data in the OMOP Common Data
 Model. PhysioNet. RRID: SCR_007345.
-\url{https://doi.org/10.13026/p1f5-7x35}
+\doi{10.13026/p1f5-7x35}
 }
 \usage{
 data(mimiv_demo)
